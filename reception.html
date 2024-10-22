@@ -1,0 +1,1069 @@
+<html lang="fr"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Site d'Inspection</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+
+
+
+    <style>
+        /* Style général du site */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        /* Mise en forme de la page principale */
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        /* Style des titres */
+        h1, h2 {
+            color: #0056b3;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* Style des boutons */
+        button {
+            background-color: #28a745; /* Vert */
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            text-align: center;
+            font-size: 16px;
+            margin: 10px auto;
+            display: block;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            width: 80%;
+            max-width: 300px;
+        }
+
+        button:hover {
+            background-color: #218838; /* Vert foncé */
+            transform: translateY(-2px);
+        }
+
+        /* Style des boutons spécifiques */
+        .taskButton {
+            background-color: #007bff; /* Bleu */
+            width: 100%;
+        }
+
+        .taskButton:hover {
+            background-color: #0056b3; /* Bleu foncé */
+        }
+
+        .verifyButton {
+            background-color: #28a745; /* Vert */
+            width: 48%;
+            margin-right: 4%;
+        }
+
+        .verifyButton:last-child {
+            margin-right: 0;
+        }
+
+        .verifyButtonWithReserve {
+            background-color: #dc3545; /* Rouge */
+            width: 48%;
+        }
+
+        .verifyButtonWithReserve:hover {
+            background-color: #c82333; /* Rouge foncé */
+        }
+
+        /* Style des champs de saisie */
+        input[type="date"],
+        select,
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0 20px 0;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        /* Style des étapes cachées */
+        .hidden {
+            display: none;
+        }
+
+        /* Style des sections d'étapes */
+        .step {
+            margin-top: 20px;
+        }
+
+        /* Style des vérifications */
+        .verifier {
+            margin-top: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            border: 1px solid #ced4da;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+        }
+
+        .verifier label {
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .verification-buttons {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .verification-status {
+            margin-top: 10px;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .status-verified {
+            color: #28a745; /* Vert */
+            font-weight: bold;
+        }
+
+        .status-with-reserve {
+            color: #dc3545; /* Rouge */
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+
+        .reserveInput {
+            width: 100%;
+            margin-top: 10px;
+            padding: 8px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            box-sizing: border-box;
+            display: none;
+        }
+        #pdfImages img {
+    width: 100%; /* L'image occupe 100% du conteneur parent */
+    height: auto; /* Ajuste la hauteur automatiquement pour maintenir les proportions */
+    margin-bottom: 20px;
+}
+
+/* Assurer que le conteneur d'images est réactif */
+#pdfImages {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centrer les images dans leur conteneur */
+}
+.title {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    width: 200px;
+}
+
+label {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.section {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+textarea {
+    width: 100%;
+    max-width: 600px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    resize: vertical; /* Permet de redimensionner uniquement verticalement */
+    background-color: #fefefe;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+textarea:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+}
+
+/* Utiliser des médias queries pour ajuster la taille en fonction des écrans plus larges */
+@media (min-width: 768px) {
+    #pdfImages img {
+        width: 75%; /* Pour les tablettes et écrans plus larges, l'image occupe 75% du conteneur */
+    }
+}
+
+@media (min-width: 1024px) {
+    #pdfImages img {
+        width: 50%; /* Pour les écrans plus grands, réduire la taille à 50% */
+    }
+}
+.section {
+            margin-bottom: 20px;
+        }
+        /* Styles réactifs pour les écrans mobiles */
+        @media (max-width: 600px) {
+            .container {
+                margin: 10px;
+                padding: 15px;
+            }
+
+            button {
+                width: 100%;
+                max-width: none;
+            }
+
+            .verification-buttons {
+                flex-direction: column;
+            }
+
+            .verifyButton,
+            .verifyButtonWithReserve {
+                width: 100%;
+                margin: 5px 0;
+            }
+        }
+    </style>
+</head>
+<body onload="loadData()">
+    <div class="container">
+        <h1>Bienvenue dans le Systéme de Géneration des PV du Chantier</h1>
+        <button id="startButton">Commencer</button>
+
+        <div id="daySelection" class="hidden step">
+            <h2>Choisissez le jour du PV :</h2>
+            <input type="date" id="inspectionDate" required="">
+            <button id="continueDayButton">Continuer</button>
+        </div>
+        <div id="section2" class="hidden step">
+            <h3>Description du Projet</h3>
+            <div class="section">
+                <label for="nomProjet">Nom du projet :</label>
+                <input type="text" id="nomProjet">
+                <label for="entreprise">Entreprise :</label>
+                <input type="text" id="entreprise">
+                <label for="maitreOuvrage">Maître d'ouvrage :</label>
+                <input type="text" id="maitreOuvrage">
+                <label for="bureauSuivi">Bureau de suivi :</label>
+                <input type="text" id="bureauSuivi">
+                <label for="commune">Commune :</label>
+                <input type="text" id="commune">
+            </div>
+
+            <h3 class="title">Avancement Actuel des Travaux</h3>
+<div class="section">
+    <textarea id="avancement" rows="4" placeholder="Décrivez l'avancement actuel..."></textarea>
+</div>
+
+<h3 class="title">Validation des Observations du Rapport Précédent</h3>
+<div class="section">
+    <textarea id="observations" rows="4" placeholder="Validez ou commentez les observations..."></textarea>
+</div>
+
+
+            <h3 class="title">Liste des Personnes Présentes</h3>
+<div class="section">
+    <div class="form-group">
+        <label for="chefChantier">Chef Chantier :</label>
+        <input type="number" id="chefChantier" placeholder="Nombre">
+    </div>
+    <div class="form-group">
+        <label for="macon">Maçon :</label>
+        <input type="number" id="macon" placeholder="Nombre">
+    </div>
+    <div class="form-group">
+        <label for="chefFerialleur">Chef Férialleur :</label>
+        <input type="number" id="chefFerialleur" placeholder="Nombre">
+    </div>
+    <div class="form-group">
+        <label for="ferialleur">Férialleur :</label>
+        <input type="number" id="ferialleur" placeholder="Nombre">
+    </div>
+    <div class="form-group">
+        <label for="mainOeuvre">Main d'œuvre :</label>
+        <input type="number" id="mainOeuvre" placeholder="Nombre">
+    </div>
+    <div class="form-group">
+        <label for="coffreur">Coffreur :</label>
+        <input type="number" id="coffreur" placeholder="Nombre">
+    </div>
+    <div class="form-group">
+        <label for="topographe">Topographe :</label>
+        <input type="number" id="topographe" placeholder="Nombre">
+    </div>
+    <div class="form-group">
+        <label for="missionSuivi">Mission de Suivi :</label>
+        <input type="number" id="missionSuivi" placeholder="Nombre">
+    </div>
+</div>
+
+
+            <h3>État du Stock sur Chantier</h3>
+            <div class="section">
+                <label for="sable">Sable :</label>
+                <input type="text" id="sable">
+                
+                <label for="gravier">Gravier :</label>
+                <input type="text" id="gravier">
+                
+                <label for="ciment">Ciment :</label>
+                <input type="text" id="ciment">
+                
+                <label for="fer16">Fer 16 :</label>
+                <input type="text" id="fer16">
+                
+                <label for="fer14">Fer 14 :</label>
+                <input type="text" id="fer14">
+                
+                <label for="fer12">Fer 12 :</label>
+                <input type="text" id="fer12">
+                
+                <label for="fer10">Fer 10 :</label>
+                <input type="text" id="fer10">
+                
+                <label for="fer8">Fer 8 :</label>
+                <input type="text" id="fer8">
+                
+                <label for="fer6">Fer 6 :</label>
+                <input type="text" id="fer6">
+            </div>
+            
+
+            <h3>Planification des Travaux à Venir</h3>
+            <textarea id="planification" rows="4"></textarea>
+
+            <h3>État de Progression et Lacunes des Travaux</h3>
+            <textarea id="progression" rows="4"></textarea>
+
+            <h3>Détails des Activités sur Chantier</h3>
+            <textarea id="detailsActivites" rows="4"></textarea>
+
+            <h1>Ajoutez les Images </h1>
+
+            <input type="file" id="photo1" accept="image/*">
+<input type="text" id="caption1" placeholder="Légende pour la photo 1">
+<input type="file" id="photo2" accept="image/*">
+<input type="text" id="caption2" placeholder="Légende pour la photo 2">
+<input type="file" id="photo3" accept="image/*">
+<input type="text" id="caption3" placeholder="Légende pour la photo 3">
+<input type="file" id="photo4" accept="image/*">
+<input type="text" id="caption4" placeholder="Légende pour la photo 4">
+<button onclick="enregistrer()">Enregistrer le PV</button>
+
+<button id="previewPdfButton" style="display:none;">Aperçu du PDF</button>
+<button id="sendPdfButton" style="display:none;">Telecharger le pdf</button>
+<button id="generatePdfButton">Générer le PDF</button>
+<div id="pdfImages"></div>
+        </div>
+<!-- Section d'aperçu -->
+<div id="pdfPreview" style="display: none;">
+    <div id="pdfImages"></div> <!-- Conteneur où les images du PDF seront affichées -->
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+
+
+    <script>
+      
+
+      let doc;
+
+    document.getElementById('startButton').addEventListener('click', () => {
+        document.getElementById('daySelection').classList.remove('hidden');
+        document.getElementById('startButton').classList.add('hidden');
+    });
+
+    document.getElementById('continueDayButton').addEventListener('click', () => {
+        const selectedDate = document.getElementById('inspectionDate').value;
+        if (selectedDate) {
+            document.getElementById('section2').classList.remove('hidden');
+            document.getElementById('daySelection').classList.add('hidden');
+        } else {
+            alert('Veuillez sélectionner une date pour continuer.');
+        }
+    });
+
+    // Fonction pour enregistrer toutes les données
+    function enregistrer() {
+            const data = {
+                nomProjet: document.getElementById('nomProjet').value,
+                entreprise: document.getElementById('entreprise').value,
+                maitreOuvrage: document.getElementById('maitreOuvrage').value,
+                bureauSuivi: document.getElementById('bureauSuivi').value,
+                commune: document.getElementById('commune').value,
+                avancement: document.getElementById('avancement').value,
+                observations: document.getElementById('observations').value,
+                personnel: {
+                    chefChantier: document.getElementById('chefChantier').value,
+                    macon: document.getElementById('macon').value,
+                    chefFerialleur: document.getElementById('chefFerialleur').value,
+                    ferialleur: document.getElementById('ferialleur').value,
+                    mainOeuvre: document.getElementById('mainOeuvre').value,
+                    coffreur: document.getElementById('coffreur').value,
+                    topographe: document.getElementById('topographe').value,
+                    missionSuivi: document.getElementById('missionSuivi').value
+                },
+                stock: {
+                    sable: document.getElementById('sable').value,
+                    gravier: document.getElementById('gravier').value,
+                    ciment: document.getElementById('ciment').value,
+                    fer16: document.getElementById('fer16').value,
+                    fer14: document.getElementById('fer14').value,
+                    fer12: document.getElementById('fer12').value,
+                    fer10: document.getElementById('fer10').value,
+                    fer8: document.getElementById('fer8').value,
+                    fer6: document.getElementById('fer6').value
+                },
+                planification: document.getElementById('planification').value,
+                progression: document.getElementById('progression').value,
+                detailsActivites: document.getElementById('detailsActivites').value,
+                
+            };
+
+            localStorage.setItem('pvData', JSON.stringify(data));
+            alert('Données enregistrées.');
+        }
+
+        // Fonction pour charger les données sauvegardées
+        function loadData() {
+            const savedData = localStorage.getItem('pvData');
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                document.getElementById('nomProjet').value = data.nomProjet || '';
+                document.getElementById('entreprise').value = data.entreprise || '';
+                document.getElementById('maitreOuvrage').value = data.maitreOuvrage || '';
+                document.getElementById('bureauSuivi').value = data.bureauSuivi || '';
+                document.getElementById('commune').value = data.commune || '';
+                document.getElementById('avancement').value = data.avancement || '';
+                document.getElementById('observations').value = data.observations || '';
+
+                document.getElementById('chefChantier').value = data.personnel.chefChantier || '';
+                document.getElementById('macon').value = data.personnel.macon || '';
+                document.getElementById('chefFerialleur').value = data.personnel.chefFerialleur || '';
+                document.getElementById('ferialleur').value = data.personnel.ferialleur || '';
+                document.getElementById('mainOeuvre').value = data.personnel.mainOeuvre || '';
+                document.getElementById('coffreur').value = data.personnel.coffreur || '';
+                document.getElementById('topographe').value = data.personnel.topographe || '';
+                document.getElementById('missionSuivi').value = data.personnel.missionSuivi || '';
+
+                document.getElementById('sable').value = data.stock.sable || '';
+                document.getElementById('gravier').value = data.stock.gravier || '';
+                document.getElementById('ciment').value = data.stock.ciment || '';
+                document.getElementById('fer16').value = data.stock.fer16 || '';
+                document.getElementById('fer14').value = data.stock.fer14 || '';
+                document.getElementById('fer12').value = data.stock.fer12 || '';
+                document.getElementById('fer10').value = data.stock.fer10 || '';
+                document.getElementById('fer8').value = data.stock.fer8 || '';
+                document.getElementById('fer6').value = data.stock.fer6 || '';
+
+                document.getElementById('planification').value = data.planification || '';
+                document.getElementById('progression').value = data.progression || '';
+                document.getElementById('detailsActivites').value = data.detailsActivites || '';
+            }
+        }
+
+        
+
+// Assurez-vous que pdf.js est chargé avant d'utiliser ce code
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.worker.min.js';
+
+document.getElementById('generatePdfButton').addEventListener('click', () => {
+    const date = document.getElementById('inspectionDate').value;
+    const element = document.getElementById('section2').value;
+    const elementName = document.getElementById('observations').value;
+    const verifications = [];
+
+     // Fonction pour enregistrer toutes les données
+     function enregistrer() {
+            const data = {
+                nomProjet: document.getElementById('nomProjet').value,
+                entreprise: document.getElementById('entreprise').value,
+                maitreOuvrage: document.getElementById('maitreOuvrage').value,
+                bureauSuivi: document.getElementById('bureauSuivi').value,
+                commune: document.getElementById('commune').value,
+                avancement: document.getElementById('avancement').value,
+                observations: document.getElementById('observations').value,
+                personnel: {
+                    chefChantier: document.getElementById('chefChantier').value,
+                    macon: document.getElementById('macon').value,
+                    chefFerialleur: document.getElementById('chefFerialleur').value,
+                    ferialleur: document.getElementById('ferialleur').value,
+                    mainOeuvre: document.getElementById('mainOeuvre').value,
+                    coffreur: document.getElementById('coffreur').value,
+                    topographe: document.getElementById('topographe').value,
+                    missionSuivi: document.getElementById('missionSuivi').value
+                },
+                stock: {
+                    sable: document.getElementById('sable').value,
+                    gravier: document.getElementById('gravier').value,
+                    ciment: document.getElementById('ciment').value,
+                    fer16: document.getElementById('fer16').value,
+                    fer14: document.getElementById('fer14').value,
+                    fer12: document.getElementById('fer12').value,
+                    fer10: document.getElementById('fer10').value,
+                    fer8: document.getElementById('fer8').value,
+                    fer6: document.getElementById('fer6').value
+                },
+                planification: document.getElementById('planification').value,
+                progression: document.getElementById('progression').value,
+                detailsActivites: document.getElementById('detailsActivites').value,
+                photos: [
+                    { file: document.getElementById('photo1').files[0], legende: document.getElementById('legende1').value },
+                    { file: document.getElementById('photo2').files[0], legende: document.getElementById('legende2').value },
+                    { file: document.getElementById('photo3').files[0], legende: document.getElementById('legende3').value },
+                    { file: document.getElementById('photo4').files[0], legende: document.getElementById('legende4').value }
+                ]
+            };
+
+            localStorage.setItem('pvData', JSON.stringify(data));
+            alert('Données enregistrées.');
+        }
+
+        // Fonction pour charger les données sauvegardées
+        function loadData() {
+            const savedData = localStorage.getItem('pvData');
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                document.getElementById('nomProjet').value = data.nomProjet || '';
+                document.getElementById('entreprise').value = data.entreprise || '';
+                document.getElementById('maitreOuvrage').value = data.maitreOuvrage || '';
+                document.getElementById('bureauSuivi').value = data.bureauSuivi || '';
+                document.getElementById('commune').value = data.commune || '';
+                document.getElementById('avancement').value = data.avancement || '';
+                document.getElementById('observations').value = data.observations || '';
+
+                document.getElementById('chefChantier').value = data.personnel.chefChantier || '';
+                document.getElementById('macon').value = data.personnel.macon || '';
+                document.getElementById('chefFerialleur').value = data.personnel.chefFerialleur || '';
+                document.getElementById('ferialleur').value = data.personnel.ferialleur || '';
+                document.getElementById('mainOeuvre').value = data.personnel.mainOeuvre || '';
+                document.getElementById('coffreur').value = data.personnel.coffreur || '';
+                document.getElementById('topographe').value = data.personnel.topographe || '';
+                document.getElementById('missionSuivi').value = data.personnel.missionSuivi || '';
+
+                document.getElementById('sable').value = data.stock.sable || '';
+                document.getElementById('gravier').value = data.stock.gravier || '';
+                document.getElementById('ciment').value = data.stock.ciment || '';
+                document.getElementById('fer16').value = data.stock.fer16 || '';
+                document.getElementById('fer14').value = data.stock.fer14 || '';
+                document.getElementById('fer12').value = data.stock.fer12 || '';
+                document.getElementById('fer10').value = data.stock.fer10 || '';
+                document.getElementById('fer8').value = data.stock.fer8 || '';
+                document.getElementById('fer6').value = data.stock.fer6 || '';
+
+                document.getElementById('planification').value = data.planification || '';
+                document.getElementById('progression').value = data.progression || '';
+                document.getElementById('detailsActivites').value = data.detailsActivites || '';
+            }
+        }
+
+        
+
+    // Variables globales pour stocker le PDF généré
+let generatedPdfBlob = null;
+
+// Fonction pour générer le PDF
+function generatePdf() {
+    // Initialisation de jsPDF
+    const { jsPDF } = window.jspdf;
+
+    // Créer une nouvelle instance de jsPDF
+    const doc = new jsPDF({
+        format: 'a4', // Spécifier le format A4
+        unit: 'mm'    // Utiliser des millimètres pour les unités
+    });
+
+// Fonction pour vérifier si on dépasse la page
+function checkPageLimit(currentYPosition, additionalSpaceNeeded) {
+            if (currentYPosition + additionalSpaceNeeded > pageHeight - bottomMargin) {
+                doc.addPage();
+                yPosition = margin;
+            }
+        }
+        // Définir les marges pour le contenu
+        const topMargin = 9; // 3 cm de marge en haut
+
+    const margin = 25; // 2.5 cm de marge sur les côtés
+    const bottomMargin = 30; // 3 cm de marge en bas
+
+    // Obtenir les dimensions de la page
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const contentWidth = pageWidth - 2 * margin;  // Largeur disponible pour le contenu (avec marges)
+
+    // Fonction pour ajouter une nouvelle page avec une bordure
+    function addNewPage() {
+        doc.addPage();
+        // Ajouter des bordures fines pour chaque nouvelle page
+        doc.setLineWidth(0.1);
+        doc.rect(10, 10, pageWidth - 20, pageHeight - 20);
+    }
+
+    // Fonction pour vérifier si on dépasse la page
+    function checkPageLimit(currentYPosition, additionalSpaceNeeded) {
+        if (currentYPosition + additionalSpaceNeeded > pageHeight - bottomMargin) {
+            addNewPage();
+            return margin;  // Réinitialiser la position Y après l'ajout d'une nouvelle page
+        }
+        return currentYPosition;
+    }
+
+
+        // Charger et ajouter l'image de fond sur la première page
+        const imageUrl = "https://i.ibb.co/1X2JsvX/logo-nasser.png";
+        const imagePromise = new Promise((resolve) => {
+            const img = new Image();
+            img.src = imageUrl;
+            img.onload = function() {
+                doc.addImage(img, 'PNG', 0, 0, pageWidth, pageHeight); // Ajouter l'image en pleine page
+                resolve();
+            };
+        });
+
+        // Une fois l'image chargée, générer le contenu du PDF
+        imagePromise.then(() => {
+            
+doc.setFont("Times", "normal");
+
+// Fonction pour formater la date
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    const options = { day: 'numeric', month: 'long', year: 'numeric' }; // Format : jour, mois (en texte), année
+    return date.toLocaleDateString('fr-FR', options); // Utiliser le format français
+}
+
+// Utiliser la fonction pour obtenir la date formatée
+const formattedDate = formatDate(date);
+doc.setFontSize(14); // Définir une taille de police plus petite, par exemple 10
+doc.setFont("Times", "bold");  // Définir la police Times New Roman en gras
+
+doc.text(`Procès-Verbal Du visite du chantier du : ${formattedDate}`, margin, margin + 30, { align: 'left' });
+
+// Ajouter un cadre avec des bordures très fines autour de chaque page
+doc.setLineWidth(0.1);  // Épaisseur de la bordure très fine
+doc.rect(10, 10, pageWidth - 20, pageHeight - 20);  // Cadre avec marges de 10mm sur chaque côté
+
+
+             // Récupérer les valeurs des champs
+const nomProjet = document.getElementById('nomProjet').value;
+const entreprise = document.getElementById('entreprise').value;
+const maitreOuvrage = document.getElementById('maitreOuvrage').value;
+const bureauSuivi = document.getElementById('bureauSuivi').value;
+const commune = document.getElementById('commune').value;
+const avancement = document.getElementById('avancement').value;
+const observations = document.getElementById('observations').value;
+
+const chefChantier = document.getElementById('chefChantier').value;
+const macon = document.getElementById('macon').value;
+const chefFerialleur = document.getElementById('chefFerialleur').value;
+const ferialleur = document.getElementById('ferialleur').value;
+const mainOeuvre = document.getElementById('mainOeuvre').value;
+const coffreur = document.getElementById('coffreur').value;
+const topographe = document.getElementById('topographe').value;
+const missionSuivi = document.getElementById('missionSuivi').value;
+
+const sable = document.getElementById('sable').value;
+const gravier = document.getElementById('gravier').value;
+const ciment = document.getElementById('ciment').value;
+const fer16 = document.getElementById('fer16').value;
+const fer14 = document.getElementById('fer14').value;
+const fer12 = document.getElementById('fer12').value;
+const fer10 = document.getElementById('fer10').value;
+const fer8 = document.getElementById('fer8').value;
+const fer6 = document.getElementById('fer6').value;
+
+const planification = document.getElementById('planification').value;
+const progression = document.getElementById('progression').value;
+const detailsActivites = document.getElementById('detailsActivites').value;
+
+
+// Organiser les informations en lignes et colonnes
+const data = [
+    // Colonne 1 : "Description du Projet" fusionnée sur 5 lignes
+    [{ content: 'Description du Projet', rowSpan: 5, styles: { halign: 'center', valign: 'middle' } }, 'Nom du Projet', nomProjet],
+    
+    // Ligne pour "Entreprise" avec une cellule vide pour la colonne 1
+    ['Entreprise', entreprise],
+    
+    // Ligne pour "Maître d'ouvrage"
+    [ 'Maître d\'ouvrage', maitreOuvrage],
+    
+    // Ligne pour "Bureau de suivi"
+    [ 'Bureau de suivi', bureauSuivi],
+    
+    // Ligne pour "Commune"
+    [ 'Commune', commune],
+
+
+    // Ligne pour "Avancement Actuel des Travaux" fusionnée sur 2 colonnes
+    ['Avancement Actuel des Travaux', { content: avancement, colSpan: 2, styles: { halign: 'left', valign: 'top', fontSize: 10 } }],
+
+    // Ligne pour "Avancement Actuel des Travaux" fusionnée sur 2 colonnes
+    ['Validation des Observations du Rapport Précédent', { content: observations, colSpan: 2, styles: { halign: 'left', valign: 'top', fontSize: 10 } }],
+   
+   
+
+
+    // Colonne 1 : "Description du Projet" fusionnée sur 5 lignes
+    [{ content: 'Liste des Personnes Présentes', rowSpan: 8, styles: { halign: 'center', valign: 'middle' } }, 'chef du Chantier', chefChantier],
+    
+    // Ligne pour "Entreprise" avec une cellule vide pour la colonne 1
+    ['macon', macon],
+    
+    // Ligne pour "Maître d'ouvrage"
+    [ 'chef Ferialleur', chefFerialleur],
+    
+ // Ligne pour "Commune"
+ [ 'ferialleur', ferialleur],
+
+    // Ligne pour "Bureau de suivi"
+    [ 'mainOeuvre', mainOeuvre],
+
+    // Ligne pour "Bureau de suivi"
+    [ 'coffreur', coffreur],
+
+// Ligne pour "Bureau de suivi"
+[ 'topographe', topographe],
+
+
+// Ligne pour "Bureau de suivi"
+[ 'missionSuivi', missionSuivi],
+
+
+   
+    
+   
+// Colonne 1 : "Description du Projet" fusionnée sur 5 lignes
+[{ content: 'Etat de Stock', rowSpan: 9, styles: { halign: 'center', valign: 'middle' } }, 'Sable', sable],
+    
+    // Ligne pour "Entreprise" avec une cellule vide pour la colonne 1
+    ['Gravier', gravier],
+    
+    // Ligne pour "Maître d'ouvrage"
+    [ 'Ciment', ciment],
+    
+ // Ligne pour "Commune"
+ [ 'Fer 16', fer16],
+
+    // Ligne pour "Bureau de suivi"
+    [ 'fer 14', fer14],
+
+    // Ligne pour "Bureau de suivi"
+    [ 'fer 12', fer12],
+
+// Ligne pour "Bureau de suivi"
+[ 'fer 10', fer10],
+
+
+// Ligne pour "Bureau de suivi"
+[ 'fer 8', fer8],
+
+// Ligne pour "Bureau de suivi"
+[ 'fer 6', fer6],
+ 
+
+// Ligne pour "Avancement Actuel des Travaux" fusionnée sur 2 colonnes
+['Planification des activités à venir ', { content: planification, colSpan: 2, styles: { halign: 'left', valign: 'top', fontSize: 10 } }],
+
+
+
+// Ligne pour "Avancement Actuel des Travaux" fusionnée sur 2 colonnes
+['Etat, progression et lacunes des travaux  ', { content: progression, colSpan: 2, styles: { halign: 'left', valign: 'top', fontSize: 10 } }],
+
+
+// Ligne pour "Avancement Actuel des Travaux" fusionnée sur 2 colonnes
+['Details des activités sur chantier  ', { content: detailsActivites, colSpan: 2, styles: { halign: 'left', valign: 'top', fontSize: 10 } }],
+    
+    
+
+    
+];
+
+
+// Définir les marges du tableau, y compris une marge de 3 cm en bas
+const bottomMargin = 30; // 3 cm = 30 mm
+
+
+
+// Créer le PDF avec le tableau
+doc.autoTable({
+    body: data,  // Données du tableau
+    theme: 'grid',  // Style avec lignes de table
+    styles: {
+        cellPadding: 0.6,  // Espacement intérieur des cellules légèrement réduit
+        fontSize: 11,    // Taille de la police réduite
+        halign: 'center',  // Centrage du texte horizontalement
+        valign: 'middle',  // Centrage vertical du texte
+        lineWidth: 0.2,  // Épaisseur des lignes très fine
+        lineColor: [169, 169, 169],  // Couleur des lignes gris (clair)
+        fillColor: false,  // Pas de couleur de fond (transparent)
+        textColor: [0, 0, 0],  // Couleur du texte (noir)
+        font: '"times", "normal",',  // Police définie en Arial (Helvetic équivalent)
+        overflow: 'linebreak',  // Autoriser le texte à passer à la ligne
+        lineHeight: 2.5  // Interligne de 1,5
+    },
+    columnStyles: {
+        0: { cellWidth: 55 }, // Largeur de la première colonne (Description du Projet)
+        1: { cellWidth: 58 }, // Largeur de la deuxième colonne (Entreprise, Maître d'ouvrage, etc.)
+        2: { cellWidth: 60 }, // Largeur de la troisième colonne (valeurs correspondantes)
+    },
+    margin: { top: 15, right: 20, bottom: bottomMargin, left: 20 },  // Marges autour du tableau, avec 3 cm en bas
+    startY: 60,  // Position de départ en Y pour le tableau
+    pageBreak: 'auto',  // Le tableau continue automatiquement sur une nouvelle page si nécessaire
+});
+
+
+// Après le tableau, ajouter le titre pour les photos
+let yPosition = doc.previousAutoTable.finalY + 15;  // Continuer après la fin du tableau
+doc.setFontSize(14);
+doc.setFont("Times", "bold");
+doc.text("Photos du chantier", 20, yPosition);
+yPosition += 10;  // Espace après le titre
+
+const images = [
+    { file: document.getElementById('photo1').files[0], caption: document.getElementById('caption1').value },
+    { file: document.getElementById('photo2').files[0], caption: document.getElementById('caption2').value },
+    { file: document.getElementById('photo3').files[0], caption: document.getElementById('caption3').value },
+    { file: document.getElementById('photo4').files[0], caption: document.getElementById('caption4').value }
+];
+
+const imagePromises = images.map((imageData, index) => {
+    return new Promise((resolve) => {
+        if (imageData.file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const imgData = event.target.result;
+
+                const imageSize = 70;
+                const spaceBetweenImages = 14; // Réduire l'espace vertical entre les lignes d'images
+                const imagesPerRow = 2;
+                const xPosition = margin + (index % imagesPerRow) * (imageSize + 10);
+                const yPositionForImage = Math.floor(index / imagesPerRow) * (imageSize + spaceBetweenImages) + yPosition;
+
+                if (yPositionForImage > pageHeight - bottomMargin - 30) {
+                    doc.addPage();
+                    doc.setLineWidth(0.5);
+                    doc.rect(10, 10, pageWidth - 20, pageHeight - 20);
+                    yPosition = 40; // Réinitialiser la position y
+                }
+
+                // Dessiner le cadre autour de l'image
+                const frameThickness = 0.5; // Épaisseur du cadre
+                const frameX = xPosition - frameThickness;
+                const frameY = yPositionForImage - frameThickness;
+
+                doc.setDrawColor(0, 0, 0); // Couleur du cadre (noir)
+                doc.setLineWidth(frameThickness);
+                doc.rect(frameX, frameY, imageSize + frameThickness * 2, imageSize + frameThickness * 2); // Dessiner le cadre
+
+                // Ajouter l'image
+                doc.addImage(imgData, 'JPEG', xPosition, yPositionForImage, imageSize, imageSize);
+
+                const captionYPosition = yPositionForImage + imageSize + 8;
+                const captionText = `Figure ${index + 1} : ${imageData.caption ? imageData.caption : ''}`; // Légende formatée
+                
+                // Définir la couleur verte foncée pour le texte
+                doc.setTextColor(0, 100, 0); // Couleur verte foncée
+                doc.setFontSize(12);
+                doc.setFont("Helvetica", "italic");
+                const captionXPosition = xPosition + (imageSize / 2) - (doc.getTextWidth(captionText) / 2);
+                doc.text(captionText, captionXPosition, captionYPosition);
+
+                resolve();
+            };
+            reader.readAsDataURL(imageData.file);
+        } else {
+            resolve();
+        }
+    });
+});
+
+
+
+
+
+// Attendre que toutes les images soient ajoutées
+Promise.all(imagePromises).then(() => {
+    // Texte à afficher
+    const headerText = "Transmettre à :";
+    const phrase1 = "- Ministère de l’Habitat, de l’Urbanisme et de l’Aménagement du Territoire";
+    const phrase2 = "- Direction du bâtiment";
+    const phrase3 = "- Groupement PT EBTR/SMCR-TP";
+
+    // Position Y pour le texte, juste après les images
+    let yPosition = doc.previousAutoTable.finalY + 10; // Juste après le tableau
+    yPosition += 220; // Ajoute un espace pour passer après les images
+
+    // Afficher le texte pour "Transmettre à :"
+    doc.setFontSize(11);
+    doc.setTextColor(0, 0, 0); // Couleur de texte noire
+    const headerWidth = doc.getStringUnitWidth(headerText) * doc.internal.getFontSize() / doc.internal.scaleFactor;
+    const headerX = (pageWidth - headerWidth) / 2; // Centrer le texte
+    doc.text(headerText, headerX, yPosition);
+    
+    // Définir la position pour les phrases suivantes
+    yPosition += 9; // Espace de 10 mm après "Transmettre à :"
+    doc.setFontSize(12); // Taille de police pour les phrases
+
+    // Afficher les phrases à gauche sans centrage
+    const leftX = margin; // Utiliser la marge gauche pour les phrases
+    doc.text(phrase1, leftX, yPosition);
+    yPosition += 7; // Espace de 10 mm entre les phrases
+    doc.text(phrase2, leftX, yPosition);
+    yPosition += 7; // Espace de 10 mm entre les phrases
+    doc.text(phrase3, leftX, yPosition);
+
+
+
+    
+    const pdfBlob = doc.output('blob');
+    generatedPdfBlob = pdfBlob;
+
+    document.getElementById('previewPdfButton').style.display = 'inline-block';
+});
+            });
+        };
+   
+
+    // Générer le PDF
+generatePdf(); // Supposons que cela crée et définit generatedPdfBlob
+
+// Ajouter la fonctionnalité pour afficher le PDF sur la page
+document.getElementById('sendPdfButton').addEventListener('click', () => {
+    if (generatedPdfBlob) {
+        // Créer une URL pour le blob PDF
+        const url = URL.createObjectURL(generatedPdfBlob);
+
+        // Afficher le PDF dans un aperçu intégré sur la page
+        const pdfPreview = document.getElementById('pdfPreview');
+        if (!pdfPreview) {
+            // Créer un iframe pour prévisualiser le PDF s'il n'existe pas encore
+            const iframe = document.createElement('iframe');
+            iframe.id = 'pdfPreview';
+            iframe.src = url;
+            iframe.width = '100%';
+            iframe.height = '600px';
+            document.body.appendChild(iframe);
+        } else {
+            // Mettre à jour la source de l'aperçu si le PDF a déjà été généré
+            pdfPreview.src = url;
+        }
+
+        // Mettre à jour le bouton "Télécharger le PDF"
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `PV_du_${new Date().toLocaleDateString('fr-FR').replace(/\//g, '-')}.pdf`; // Nom du fichier
+        a.textContent = 'Télécharger le PDF';
+        a.style.display = 'block'; // Optionnel : pour que le lien soit bien visible
+        document.body.appendChild(a); // Ajouter le lien de téléchargement en dessous du PDF
+    } else {
+        alert('Aucun PDF à afficher. Veuillez d\'abord générer le PDF.');
+    }
+});
+
+
+
+
+
+    // Fonction pour afficher un aperçu du PDF sous forme d'images
+    document.getElementById('previewPdfButton').addEventListener('click', () => {
+        if (generatedPdfBlob) {
+            const pdfUrl = URL.createObjectURL(generatedPdfBlob); // Créer une URL pour le fichier PDF
+
+            // Utiliser pdf.js pour convertir le PDF en images
+            const loadingTask = pdfjsLib.getDocument(pdfUrl);
+            loadingTask.promise.then((pdf) => {
+                const pdfImagesContainer = document.getElementById('pdfImages');
+                pdfImagesContainer.innerHTML = ''; // Vider le conteneur avant d'ajouter les nouvelles pages
+
+                for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+                    pdf.getPage(pageNum).then((page) => {
+                        const scale = 1.5; // Facteur de zoom
+                        const viewport = page.getViewport({ scale });
+
+                        // Créer un canevas pour afficher la page
+                        const canvas = document.createElement('canvas');
+                        const context = canvas.getContext('2d');
+                        canvas.width = viewport.width;
+                        canvas.height = viewport.height;
+
+                        // Rendre la page sur le canevas
+                        const renderTask = page.render({
+                            canvasContext: context,
+                            viewport: viewport
+                        });
+
+                        // Une fois la page rendue, ajouter l'image au conteneur
+                        renderTask.promise.then(() => {
+                            const img = document.createElement('img');
+                            img.src = canvas.toDataURL(); // Convertir le canvas en image
+                            img.style.marginBottom = '20px'; // Ajouter un espace entre les images
+                            pdfImagesContainer.appendChild(img);
+                        });
+                    });
+                }
+
+                document.getElementById('pdfPreview').style.display = 'block'; // Montrer l'aperçu
+                document.getElementById('sendPdfButton').style.display = 'inline-block'; // Afficher le bouton pour envoyer
+            });
+        } else {
+            alert('Veuillez générer un PDF avant de l\'afficher.');
+        }
+    });
+
+});
+
+    </script>
+
+
+</div>
+</body></html>
